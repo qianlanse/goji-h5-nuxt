@@ -1,0 +1,133 @@
+$len: 200
+$mul: 1
+$px: px
+
+@for $i from 1 through $len
+	.pc#{$i * $mul}
+		width: percentage($i / 100)
+	.ph#{$i * $mul}
+		height: percentage($i / 100)
+
+@for $i from 1 through $len
+	.w#{$i * $mul}
+		width: #{$i * $mul}$px
+@for $i from 1 through $len
+	.h#{$i * $mul}
+		height: #{$i * $mul}$px
+
+@for $i from 1 through $len
+	.mt#{$i * $mul}
+		margin-top: #{$i * $mul}px
+@for $i from 1 through $len
+	.mb#{$i * $mul}
+		margin-bottom: #{$i * $mul}px
+@for $i from 1 through $len
+	.ml#{$i * $mul}
+		margin-left: #{$i * $mul}px
+@for $i from 1 through $len
+	.mr#{$i * $mul}
+		margin-right: #{$i * $mul}px
+@for $i from 1 through $len
+	.m#{$i * $mul}
+		margin: #{$i * $mul}px
+@for $i from 1 through $len
+	.mtb#{$i * $mul}
+		margin-top: #{$i * $mul}px
+		margin-bottom: #{$i * $mul}px
+@for $i from 1 through $len
+	.mlr#{$i * $mul}
+		margin-left: #{$i * $mul}px
+		margin-right: #{$i * $mul}px
+
+@for $i from 1 through $len
+	.pt#{$i * $mul}
+		padding-top: #{$i * $mul}px
+@for $i from 1 through $len
+	.pb#{$i * $mul}
+		padding-bottom: #{$i * $mul}px
+@for $i from 1 through $len
+	.pl#{$i * $mul}
+		padding-left: #{$i * $mul}px
+@for $i from 1 through $len
+	.pr#{$i * $mul}
+		padding-right: #{$i * $mul}px
+@for $i from 1 through $len
+	.p#{$i * $mul}
+		padding: #{$i * $mul}px
+@for $i from 1 through $len
+	.ptb#{$i * $mul}
+		padding-top: #{$i * $mul}px
+		padding-bottom: #{$i * $mul}px
+@for $i from 1 through $len
+	.plr#{$i * $mul}
+		padding-left: #{$i * $mul}px
+		padding-right: #{$i * $mul}px
+
+@for $i from 100 through 200
+	.lh#{$i}
+		line-height: percentage($i / 100)
+
+$szlen: 200
+$szmul: 1
+@for $i from 0 through $szlen
+	.fz#{$i * $szmul}
+		font-size: #{$i * $szmul}px
+@for $i from 0 through $szlen
+	.br#{$i * $szmul}
+		border-radius: #{$i * $szmul}px
+@for $i from 1 through $szlen
+	.lineh#{$i * $szmul}
+		line-height: #{$i * $szmul}px
+
+$toplen: 50
+$topmul: 1
+@for $i from 1 through $toplen
+	.t#{$i * $topmul}
+		top: #{$i * $topmul}px
+@for $i from 1 through $toplen
+	.r#{$i * $topmul}
+		right: #{$i * $topmul}px
+@for $i from 1 through $toplen
+	.b#{$i * $topmul}
+		bottom: #{$i * $topmul}px
+@for $i from 1 through $toplen
+	.l#{$i * $topmul}
+		left: #{$i * $topmul}px
+@mixin flex
+    display: flex
+.flex
+    @include flex
+@mixin flex1
+    flex: 1
+.flex1
+    @include flex1
+@mixin flex-center
+    display: flex
+    justify-content: center
+    align-items: center
+.flex-center
+    @include flex-center
+@mixin flex-row
+    display: flex
+    flex-direction: row
+.flex-row
+    @include flex-row
+@mixin flex-row-center
+    display: flex
+    flex-direction: row
+    align-items: center
+.flex-row-center
+    @include flex-row-center
+@mixin flex-column-center
+    display: flex
+    flex-direction: column
+    justify-content: center
+.flex-column-center
+    @include flex-column-center
+@mixin flex-column-center
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+.flex-column-center
+    @include flex-column-center

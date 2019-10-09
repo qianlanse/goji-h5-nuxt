@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="22px" viewBox="0 0 16 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>collect_selected</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="文章详情" transform="translate(-276.000000, -2357.000000)" fill="#FFD503">
+            <g id="Group-5" transform="translate(0.000000, 2343.000000)">
+                <g id="分组-5-copy">
+                    <g id="分组-7" transform="translate(10.000000, 2.000000)">
+                        <g id="collect_selected" transform="translate(266.000000, 12.000000)">
+                            <g id="分组">
+                                <path d="M7.5,18.117093 L0.696644444,21.1616667 C0.385311111,21.301 0.0433111111,21.0536667 0.0424222222,20.6887778 L-2.22222225e-05,1.577 C-2.22222225e-05,0.709666667 0.654866667,0.000111111111 1.45553333,0.000111111111 L7.5,0.000111111111 L7.5,18.117093 Z M8.5,0.000111111111 L14.5444222,0.000111111111 C15.3450889,0.000111111111 15.9999778,0.709666667 15.9999778,1.577 L15.9999778,20.8638889 C15.9999778,21.2316667 15.6535333,21.4798889 15.3410889,21.3358889 L8.5,18.181827 L8.5,0.000111111111 Z" id="合并形状"></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

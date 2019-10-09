@@ -1,0 +1,183 @@
+<template lang="pug">
+    .article-list-container
+        .article-content(v-if="result['content'] && result['content'].length === 0 && !result['empty']")
+            skeleton(v-for="item in 4" :key="item")
+        .list-container
+            .list-side-box(v-for="(item, index) in result['renderList']" :key="index")
+                .list-item(v-for="(jtem, jndex) in item" :key="jndex" @click="handleViewDetail(jtem)")
+                    .body-thumb.hidden.flex-center(:width="jtem.width + 'px'" :height="jtem.height + 'px'")
+                        van-image.hidden.thumb.fadein.lazyload(:src="jtem.coverImage")
+                        .body-video(v-if="jtem.articleType === 'VIDEO'")
+                            .icon-inner
+                                van-image.icon-image(src="/images/play.png")
+                    .body-content.ptb10.plr8
+                        .title-box
+                            .title.orient(v-html="jtem.title")
+                        .footer
+                            .w25.h25.mr5(@click.prevent="handleViewUser(jtem)")
+                                van-image.pc100.ph100.circle.hidden.fadein(:src="jtem.authorAvatar")
+                            .fz12.lh150.color-text.orient.orient1.flex1(@click.prevent="handleViewUser(jtem)") {{ jtem.authorName }}
+                            //-.flex-row-center.ml10(@click.prevent="handleLike(jtem, index, jndex)")
+                                .mr3.w20.h20.flex-center.relative.t2
+                                    .absolute-center.color-black(v-if="jtem.likeLoading")
+                                        van-loading(type="spinner")
+                                    //-i.icon.icon-like.color-text-light-x.fz14
+                                    //-van-image.w24.h24(v-else :src="{ jtem.liked ? '/static/images/like02.svg' : '/static/images/like01.svg' }")
+                                //-.fz14.color-text-light {{ jtem.likeCount > 99 ? '99+' : jtem.likeCount }}
+        loadmore(v-if="result['query']['page'] !== 1 && !result['empty'] && !result['loaded']")
+        loaded(v-if="result['loaded'] && !result['empty']")
+        empty(v-if="result['empty']")
+</template>
+<script>
+    import loadmore from '../load-more.vue'
+    import empty from '../empty.vue'
+    import loaded from '../loaded.vue'
+    import { initData } from '../../common/util'
+    import skeleton from './skeleton.vue'
+
+    export default {
+        components: {
+            loadmore,
+            empty,
+            loaded,
+            skeleton
+        },
+        props: {
+            result: {
+                type: Object,
+                require: true,
+                default: () => initData()
+            },
+            redirect: {
+                type: String,
+                default: 'false'
+            },
+            userredirect: {
+                type: String,
+                default: 'false'
+            },
+            columns: {
+                type: Number,
+                default: 2
+            },
+            forceRepaint: {
+                type: Boolean,
+                default: false
+            }
+        },
+        watch: {
+            result (val) {
+                console.log(val)
+            }
+        },
+        methods: {
+            // 查看详情
+            handleViewDetail (item) {
+                const url = `/pages/detail/detail?id=${item.id}`
+                console.log(url)
+            },
+            // 查看用户
+            handleViewUser ({ authorId }) {
+                console.log(authorId)
+            },
+            // 点赞
+			async handleLike (item, index, jndex) {
+                /* const current = this.result.renderList[index][jndex]
+                if (current.likeLoading) {
+                    return
+                }
+                const backUrl = '/pages/index/index'
+                if (checkAuth(backUrl, true)) {
+                    try {
+                        current.likeLoading = true
+                        const response = await ArticleApi.articleLike(item.id)
+                        current.likeLoading = false
+                        if (response && response.success) {
+                            this.$emit('handleLike', response, index, jndex)
+                        }
+                    } catch (error) {
+                        current.likeLoading = false
+                        if (this.$parent.requestErrorHandle) {
+                            this.$parent.isRequest = true
+                            this.$parent.requestErrorHandle(error)
+                        }
+                        this.$apply()
+                    }
+                } */
+            }
+        }
+    }
+</script>
+<style lang="sass">
+    @import "~assets/sass/mixin.sass"
+    .article-list-container
+        .article-content
+            display: flex
+            flex-wrap: wrap
+        .list-container
+            display: flex
+            flex-direction: row
+            .list-side-box
+                display: flex
+                flex: 1
+                flex-direction: column
+                width: 50%
+                &:nth-child(2n + 1)
+                    padding-right: 5px
+                &:nth-child(2n + 2)
+                    padding-left: 5px
+                .list-item
+                    margin-bottom: 10px
+            .body-thumb
+                position: relative
+                width: 100%
+                .lazyload
+                    border-top-left-radius: 5px
+                    border-top-right-radius: 5px
+                .thumb
+                    width: 100%
+                    height: 100%
+                    border-top-left-radius: 5px
+                    border-top-right-radius: 5px
+                    background: #f5f6fa
+                    &.mask
+                        filter: blur(15px)
+                        position: absolute
+                        top: 0
+                        left: 0
+                        z-index: -1
+                .body-video
+                    position: absolute
+                    top: 0
+                    left: 0
+                    padding: 10px
+                    width: 100%
+                    height: 100%
+                    @include flex-center
+                    .icon-inner
+                        width: 40px
+                        height: 40px
+                        background: rgba(0, 0, 0, 0.5)
+                        border-radius: 50%
+                        overflow: hidden
+                        @include flex-center
+                        .icon-image
+                            width: 40px
+                            height: 40px
+                    .icon
+                        font-size: 80rpx
+                        color: white
+            .body-content
+                background: #f9f9f9
+                border-bottom-left-radius: 5px
+                border-bottom-right-radius: 5px
+                .title
+                    font-size: 14px
+                    line-height: 1.4
+                    color: #454545
+                .footer
+                    display: flex
+                    align-items: center
+                    margin-top: 10px
+                    overflow: hidden
+</style>
