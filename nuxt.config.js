@@ -1,3 +1,4 @@
+const { resolve } = require('path')
 const config = require('./common/config.js')
 module.exports = {
     mode: 'universal',
@@ -31,9 +32,7 @@ module.exports = {
     /*
      ** Customize the progress-bar color
      */
-    loading: {
-        color: '#fff'
-    },
+    loading: false,
     /*
      ** Global CSS
      */
@@ -76,7 +75,25 @@ module.exports = {
         /*
          ** You can extend webpack config here
          */
-        extend(config, ctx) {}
+        extend(config, { isDev, isClient }) {
+            if (isDev && isClient) {
+                config.module.rules.push({
+                    enforce: 'pre',
+                    test: /\.(js|vue)$/,
+                    loader: 'eslint-loader',
+                    exclude: /(node_modules)/
+                })
+                config.module.rules.push({
+                    test: /\.(png|jpe?g|gif|svg)$/,
+                    loader: 'url-loader',
+                    exclude: [resolve(__dirname, 'static/svgs')],
+                    options: {
+                        limit: 1000,
+                        name: 'img/[name].[hash:8].[ext]'
+                    }
+                })
+            }
+        }
     },
     server: {
         host: '0.0.0.0'

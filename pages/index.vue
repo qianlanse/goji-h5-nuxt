@@ -1,41 +1,131 @@
 <template lang="pug">
-    van-pull-refresh.index-container(v-model="isLoading" @refresh="onRefresh")
+    van-pull-refresh(v-model="refreshLoading" @refresh="handleRefresh")
         banner(:data="banners")
-        m-nav(:data="navs" @change="handleChangeNav")
-        .pt10.plr10.hidden
-            m-article(v-for="(item, index) in tabList" :key="index" :result="item" v-show="currentIndex === index")
+        m-nav(:navs="navs" :fixed="isFixed" @change="handleChangeNav")
+        .mlr10(v-if="!tabList.length")
+            .flex-wrap
+                skeleton(v-for="item in 4" :key="item")
+        van-list.plr10.pt8(
+            v-for="(item, index) in tabList"
+            :key="index"
+            v-model="item.loading"
+            @load="handleScroll"
+            v-show="currentIndex === index"
+            :offset="100"
+            :finished="item.loaded"
+            finished-text="没有更多数据了呀^_^"
+            :immediate-check="true")
+            loadmore(slot="loading")
+            m-article(:result="item")
 </template>
 <script>
     import qs from 'qs'
 	import banner from '~/components/banner.vue'
 	import MNav from '~/components/nav.vue'
 	import MArticle from '~/components/article/article.vue'
+	import skeleton from '~/components/article/skeleton.vue'
+	import loadmore from '~/components/load-more.vue'
     import { initData, changeDataSource } from '~/common/util.js'
 	export default {
 		components: {
             banner,
             MNav,
-            MArticle
-		},
+            MArticle,
+            skeleton,
+            loadmore
+        },
 		data() {
 			return {
-                isLoading: false,
-                currentIndex: 0,
+                refreshLoading: false,
+                isFixed: false,
 				banners: [],
                 navs: [],
-                tabList: []
+                tabList: [],
+                currentIndex: 0,
+                halfWidth: 0,
+                bannerHeight: 0
 			}
-		},
+        },
+        head() {
+            return {
+                title: 'GOJI',
+                meta: [
+                    {
+                        hid: 'description', name: 'description', content: 'GOJI be well be happy'
+                    }
+                ]
+            }
+        },
+        // 初始化服务端数据
+        async asyncData({ $axios }) {
+            try {
+                const [bannerData, navData] = await Promise.all([
+                    $axios.get('index/ad'),
+                    $axios.get('index/tags4recommend')
+                ])
+                const navs = [{ id: '', name: '推荐' }, ...navData.data]
+                return {
+                    banners: bannerData.data.bannerAd.filter(item => item.category !== 'PRODUCT' && item.category !== 'SHOP').map((item) => {
+                        return {
+                            ...item,
+                            loaded: false,
+                            coverImage: item.coverImageUrl + '?x-oss-process=image/resize,p_80/format,jpg'
+                        }
+                    }),
+                    navs,
+                    tabList: navs.map(() => initData())
+                }
+            } catch (err) {
+            }
+        },
 		created() {
-			this.fetchBannerAd()
-			this.fetchNavData()
-		},
+            this.fetchNavData()
+        },
+        mounted() {
+            if (process.browser) {
+                this.halfWidth = document.body.clientWidth / 2 - 15
+                window.addEventListener('resize', this.handleWindowResize)
+                window.addEventListener('scroll', this.handleWindowScroll)
+            }
+        },
+        destroyed() {
+            if (process.browser) {
+                window.removeEventListener('resize', this.handleWindowResize)
+                window.removeEventListener('scroll', this.handleWindowScroll)
+            }
+        },
 		methods: {
-            onRefresh() {
-                setTimeout(() => {
-                    this.$toast('刷新成功')
-                    this.isLoading = false
-                }, 500)
+            // 屏幕大小改变
+            handleWindowResize() {
+                this.halfWidth = document.body.clientWidth / 2 - 15
+                this.changeDataSource()
+            },
+            // 屏幕滚动
+            handleWindowScroll() {
+                this.isFixed = window.scrollY >= this.bannerHeight
+            },
+            // 改变页面布局
+            changeDataSource() {
+                const currentIndex = this.currentIndex
+                const parent = this.tabList[currentIndex]
+                const data = changeDataSource(this.halfWidth, parent.content, true)
+                parent.renderList = [[], []]
+                data.forEach((item, index) => {
+                    const willPushIndex = index % 2
+                    parent.renderList[willPushIndex].push(item)
+                })
+            },
+            // 下拉刷新
+            handleRefresh() {
+                this.fetchDataList(true)
+                this.refreshLoading = false
+            },
+            // 页面滚动
+            handleScroll() {
+                const current = this.tabList[this.currentIndex]
+                if (this.tabList.length && current.content.length) {
+                    this.fetchDataList()
+                }
             },
             // 切换菜单
             handleChangeNav (index) {
@@ -43,21 +133,6 @@
                 if (!this.tabList[index].totalPages) {
                     this.fetchDataList()
                 }
-            },
-            // 获取banner广告数据
-			async fetchBannerAd() {
-				try {
-					const response = await this.$axios.get('index/ad')
-					if (response && response.success) {
-						this.banners = response.data.bannerAd.filter(item => item.category !== 'PRODUCT' && item.category !== 'SHOP').map((item) => {
-							return {
-								...item,
-								loaded: false,
-								coverImage: item.coverImageUrl + '?x-oss-process=image/resize,p_40/format,jpg'
-							}
-                        })
-					}
-				} catch (error) {}
             },
             // 获取首页TabData
             async fetchNavData () {
@@ -72,17 +147,14 @@
                 }
             },
             // 获取列表数据
-            async fetchDataList () {
+            async fetchDataList (refresh = false) {
                 const currentIndex = this.currentIndex
                 const parent = this.tabList[currentIndex]
-                if (parent.loading) {
-                    return
-                }
                 if (parent.query.page > parent.totalPages && parent.totalPages > 0) {
-                    parent.loaded = true
+                    parent.loaded = false
+                    parent.loading = false
                 } else {
                     try {
-                        parent.loading = true
                         const params = {
                             ...parent.query,
                             tag: this.navs[currentIndex].id
@@ -91,13 +163,16 @@
                         if (response && response.success) {
                             const totalPages = response.data.totalPages
                             let { data } = response.data
-                            data = changeDataSource(160, data)
+                            data = changeDataSource(this.halfWidth, data)
                             if (totalPages) {
                                 data.forEach((item, index) => {
                                     const willPushIndex = index % 2
-                                    parent.renderList[willPushIndex].push(item)
+                                    if (refresh) {
+                                        parent.renderList[willPushIndex].unshift(item)
+                                    } else {
+                                        parent.renderList[willPushIndex].push(item)
+                                    }
                                 })
-                                parent.loading = false
                                 parent.totalPages = totalPages
                                 parent.content = [...parent.content, ...data]
                                 parent.query = {
@@ -111,10 +186,9 @@
                                 parent.empty = true
                             }
                         }
-                        if (this.loading) {
-                            this.loading = false
-                        }
+                        parent.loading = false
                     } catch (error) {
+                        parent.loading = false
                     }
                 }
             }

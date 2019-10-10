@@ -20,7 +20,8 @@ module.exports = {
   rules: {
     'nuxt/no-cjs-in-config': 'off',
     'space-before-function-paren': 'off',
-    'no-debugger': 0,
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     indent: 0,
     'no-tabs': 0,
   },

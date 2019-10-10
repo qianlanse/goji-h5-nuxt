@@ -81,16 +81,16 @@ $szmul: 1
 
 $toplen: 50
 $topmul: 1
-@for $i from 1 through $toplen
+@for $i from 0 through $toplen
 	.t#{$i * $topmul}
 		top: #{$i * $topmul}px
-@for $i from 1 through $toplen
+@for $i from 0 through $toplen
 	.r#{$i * $topmul}
 		right: #{$i * $topmul}px
-@for $i from 1 through $toplen
+@for $i from 0 through $toplen
 	.b#{$i * $topmul}
 		bottom: #{$i * $topmul}px
-@for $i from 1 through $toplen
+@for $i from 0 through $toplen
 	.l#{$i * $topmul}
 		left: #{$i * $topmul}px
 @mixin flex
@@ -131,3 +131,8 @@ $topmul: 1
     justify-content: center
 .flex-column-center
     @include flex-column-center
+@mixin flex-wrap
+    display: flex
+    flex-wrap: wrap
+.flex-wrap
+    @include flex-wrap

@@ -4,9 +4,16 @@
             skeleton(v-for="item in 4" :key="item")
         .list-container
             .list-side-box(v-for="(item, index) in result['renderList']" :key="index")
-                .list-item(v-for="(jtem, jndex) in item" :key="jndex" @click="handleViewDetail(jtem)")
-                    .body-thumb.hidden.flex-center(:width="jtem.width + 'px'" :height="jtem.height + 'px'")
-                        van-image.hidden.thumb.fadein.lazyload(:src="jtem.coverImage")
+                nuxt-link.list-item(v-for="(jtem, jndex) in item" :key="jndex" tag="div" :to="`/detail/${jtem.id}`")
+                    .body-thumb
+                        van-image.fadein.lazyload.block(
+                            :src="jtem.coverImage"
+                            :width="jtem.width + 'px'"
+                            :height="jtem.height + 'px'")
+                            template(v-slot:loading)
+                                div.lazyload.pc100.ph100
+                            template(v-slot:error)
+                                div.lazyload.pc100.ph100
                         .body-video(v-if="jtem.articleType === 'VIDEO'")
                             .icon-inner
                                 van-image.icon-image(src="/images/play.png")
@@ -17,29 +24,22 @@
                             .w25.h25.mr5(@click.prevent="handleViewUser(jtem)")
                                 van-image.pc100.ph100.circle.hidden.fadein(:src="jtem.authorAvatar")
                             .fz12.lh150.color-text.orient.orient1.flex1(@click.prevent="handleViewUser(jtem)") {{ jtem.authorName }}
-                            //-.flex-row-center.ml10(@click.prevent="handleLike(jtem, index, jndex)")
-                                .mr3.w20.h20.flex-center.relative.t2
+                            .flex-row-center.ml10(@click.prevent="handleLike(jtem, index, jndex)")
+                                .mr3.w20.h20.flex-center.relative
                                     .absolute-center.color-black(v-if="jtem.likeLoading")
                                         van-loading(type="spinner")
-                                    //-i.icon.icon-like.color-text-light-x.fz14
-                                    //-van-image.w24.h24(v-else :src="{ jtem.liked ? '/static/images/like02.svg' : '/static/images/like01.svg' }")
-                                //-.fz14.color-text-light {{ jtem.likeCount > 99 ? '99+' : jtem.likeCount }}
-        loadmore(v-if="result['query']['page'] !== 1 && !result['empty'] && !result['loaded']")
-        loaded(v-if="result['loaded'] && !result['empty']")
+                                    i.icon.icon-like.color-text.fz14
+                                .fz14.color-text {{ jtem.likeCount > 99 ? '99+' : jtem.likeCount }}
         empty(v-if="result['empty']")
 </template>
 <script>
-    import loadmore from '../load-more.vue'
     import empty from '../empty.vue'
-    import loaded from '../loaded.vue'
     import { initData } from '../../common/util'
     import skeleton from './skeleton.vue'
 
     export default {
         components: {
-            loadmore,
             empty,
-            loaded,
             skeleton
         },
         props: {
@@ -47,41 +47,18 @@
                 type: Object,
                 require: true,
                 default: () => initData()
-            },
-            redirect: {
-                type: String,
-                default: 'false'
-            },
-            userredirect: {
-                type: String,
-                default: 'false'
-            },
-            columns: {
-                type: Number,
-                default: 2
-            },
-            forceRepaint: {
-                type: Boolean,
-                default: false
-            }
-        },
-        watch: {
-            result (val) {
-                console.log(val)
             }
         },
         methods: {
             // 查看详情
-            handleViewDetail (item) {
-                const url = `/pages/detail/detail?id=${item.id}`
-                console.log(url)
+            handleViewDetail () {
+                // const url = `/pages/detail/detail?id=${item.id}`
             },
             // 查看用户
-            handleViewUser ({ authorId }) {
-                console.log(authorId)
+            handleViewUser () {
             },
             // 点赞
-			async handleLike (item, index, jndex) {
+			async handleLike () {
                 /* const current = this.result.renderList[index][jndex]
                 if (current.likeLoading) {
                     return

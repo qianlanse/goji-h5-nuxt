@@ -1,21 +1,32 @@
 <template lang="pug">
-    .pt10.plr10.bg-white.nav-box-info
-        .nav-component-wrapper
-            .nav-scroll-view
-                .nav-content
-                    .nav-item(
-                        v-for="(item, index) in data" :key="index"
-                        :class="{selected: index === currentIndex}"
-                        @click="handleChangeNav(index)")
-                        .nav-name {{ item.name }}
-                    .line(v-if="data.length" :style="{width: navLineWidth + 'px', left: navLineLeft + 'px'}")
+    div(:style="{height: navHeight + 'px'}")
+        .plr10.bg-white(ref="nav" :class="{fixedNav: fixed}")
+            .nav-component-wrapper
+                .nav-scroll-view
+                    .nav-content(v-if="!navs.length")
+                        .h40.flex-center(v-for="item in 10" :key="item")
+                            .mr15.ptb8.plr20.bg-background.lazyload.br2
+                    .nav-content
+                        .mr30.nav-item(
+                            v-for="(item, index) in navs" :key="index"
+                            @click="handleChangeNav(index)")
+                            .h40.flex-center
+                                .fz14.nav-item-inner(:class="{'bold fz16': index === currentIndex}") {{ item.name }}
+                        .line(v-if="navs.length" :style="{width: navLineWidth + 'px', left: navLineLeft + 'px'}")
+        //-.pc100(:style="{height: navHeight + 'px'}" v-show="fixed")
 </template>
 <script>
     export default {
         props: {
-            data: {
+            navs: {
                 type: Array,
-                required: true
+                default() {
+                    return []
+                }
+            },
+            fixed: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -23,6 +34,7 @@
                 currentIndex: 0,
                 navLineLeft: 0,
                 navLineWidth: 0,
+                navHeight: 40,
                 domInfos: []
             }
         },
@@ -35,14 +47,17 @@
             }
         },
         mounted() {
-            const navDoms = document.getElementsByClassName('nav-item')
-            for (const nav of navDoms) {
-                this.domInfos.push({
-                    width: nav.offsetWidth,
-                    left: nav.offsetLeft
-                })
+            if (process.browser) {
+                const navDoms = document.getElementsByClassName('nav-item')
+                for (const nav of navDoms) {
+                    this.domInfos.push({
+                        width: nav.offsetWidth,
+                        left: nav.offsetLeft
+                    })
+                }
+                this.moveTo()
+                this.navHeight = this.$refs.nav.clientHeight
             }
-            this.moveTo()
         },
         methods: {
             handleChangeNav(index) {
@@ -66,9 +81,10 @@
     .fixedNav
         position: fixed
         left: 0
+        top: 0
         z-index: 9999
         width: 100%
-        box-shadow: 0 4px 5px rgba(0, 0, 0, 0.06)
+        box-shadow: 0 4px 5px rgba(0, 0, 0, 0.04)
     .nav-component-wrapper
         background: white
         overflow: hidden
@@ -76,28 +92,22 @@
             padding-bottom: 10px
         &:before
             border-top-color: #f5f5f5
-        .nav-scroll-view
-            width: 100%
+    .nav-scroll-view
+        width: 100%
+        position: relative
+        overflow-x: scroll
+        .nav-content
+            display: flex
+            white-space: nowrap
             position: relative
-            overflow-x: scroll
-            .nav-content
-                display: flex
-                white-space: nowrap
-                position: relative
-                padding-bottom: 5px
-            .nav-item
-                margin: 0 30px 0 0
-                .nav-name
-                    font-size: 14px
-                &.selected
-                    .nav-name
-                        font-weight: bold
-            .line
-                width: 0
-                height: 2px
-                background: $color-main
-                transition: all 0.5s
-                position: absolute
-                left: 0
-                bottom: 0
+        .nav-item-inner
+            transition: all 0.15s ease
+        .line
+            width: 0
+            height: 2px
+            background: $color-main
+            transition: all 0.5s
+            position: absolute
+            left: 0
+            bottom: 0
 </style>

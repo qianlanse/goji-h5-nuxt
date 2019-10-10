@@ -1,4 +1,4 @@
-export default function({ app, $axios, store, redirect }) {
+export default function({ app, $axios, redirect }) {
     $axios.onRequest((config) => {
         /* if (store && store.state.user.token) {
             config.headers.Authorization = 'Bearer ' + store.state.user.token
@@ -8,13 +8,12 @@ export default function({ app, $axios, store, redirect }) {
     $axios.onResponse((response) => {
         const data = response.data
         if (!data.success) {
-            // 请求失败;
             return
         }
         if (data.code === 401 || data.code === '401') {
             app.$cookies.remove('GOIJI-WEBSITE-TOKEN')
         }
-        return response.data
+        return data
     })
     $axios.onError((error) => {
         // 请求错误请稍后再试
