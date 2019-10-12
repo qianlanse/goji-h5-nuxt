@@ -1,6 +1,6 @@
 <template lang="pug">
     .global-header-container(v-if="!isWechatBrowser")
-        .global-header.hidden(:class="{'border-bottom-1px': borderpixel}")
+        .global-header(:class="{'border-bottom-1px': borderpixel}")
             .global-left-box.flex-row-center.hidden.pl10(
                 ref="globalHeaderLeft"
                 :class="[leftShow, notTransparent]"
@@ -12,7 +12,7 @@
                     .w30.h30.circle.flex-center(:class="transparent" :style="{'background-color': leftbgcolor + ' !important'}")
                         .icon.icon-shouye.bold
                 slot(name="leftchild")
-            .global-header-content(ref="globalHeaderContent" :style="{height: height + 'px', padding: '0 ' + paddingTitle + 'px'}")
+            .global-header-content.hidden(ref="globalHeaderContent" :style="{height: height + 'px', padding: '0 ' + paddingTitle + 'px'}")
                 .global-center.flex-center.ph100(v-if="title !== ''")
                     h2.no-bold.orient.orient1.lh140.fz16 {{ title }}
                 slot(name="headerchild")
@@ -135,7 +135,7 @@
                 backface-visibility: visible
                 transform: translateX(0)
         .bg-transparent
-            background: rgba(255, 255, 255, 0.5)
+            background: rgba(255, 255, 255, 0.35)
         .global-header
             position: fixed
             top: 0
@@ -151,4 +151,6 @@
                     left: 0
                     width: 100%
                     z-index: 1
+        .global-header-background
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.035)
 </style>

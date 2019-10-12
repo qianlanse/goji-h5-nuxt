@@ -1,5 +1,7 @@
 <template lang="pug">
     van-pull-refresh.detail-container(v-model="refreshLoading" @refresh="handleRefresh")
+        .bg-white.flex-center.full-page-fixed.z10005(v-if="initLoading")
+            van-loading(type="spinner" size="24px") 加载中..
         m-header(ref="MHeader" :notpaddingbox="false")
             .flex-row-center.ph100(ref="authorHeader" slot="headerchild")
                 van-image.w30.h30.block.circle.hidden(:src="result.authorAvatar && result.authorAvatar + '?x-oss-process=image/resize,m_fill,h_100,w_100/format,jpg'")
@@ -12,7 +14,7 @@
                     p.orient.orient1.fz12.color-text-light-x.lh130 {{ result.authorIntro }}
             .flex-center.ph100(slot="rightchild")
                 .w30.h30.circle.flex-center
-                    i.icon.icon-more
+                    i.icon.icon-moreandroid
         .swiper-container.hidden.relative(:style="{'max-height': swipeMaxHeight + 'px'}")
             van-swipe.transition(@change="handleChangeSwiper" :show-indicators="false" :style="{height: swipeHeight + 'px'}")
                 van-swipe-item(v-for="(item, index) in result.images" :key="index" @click="handlePreview(index)")
@@ -101,6 +103,7 @@
                 swipeMaxHeight: 240,
                 swipeHeight: 240,
                 refreshLoading: false,
+                initLoading: true,
                 result: {},
                 totalComments: 0,
                 comments: [],
@@ -132,7 +135,8 @@
                             page: 2,
                             size: item.top3.length
                         }
-                    })
+                    }),
+                    initLoading: false
                 }
             } catch (error) {}
         },
