@@ -2,7 +2,7 @@
     div(:style="{height: navHeight + 'px'}")
         .plr10.bg-white(ref="nav" :class="{fixedNav: fixed}")
             .nav-component-wrapper
-                .nav-scroll-view
+                .nav-scroll-view(ref="navScrollView")
                     .nav-content(v-if="!navs.length")
                         .h40.flex-center(v-for="item in 10" :key="item")
                             .mr15.ptb8.plr20.bg-background.lazyload.br2
@@ -61,6 +61,10 @@
         },
         methods: {
             handleChangeNav(index) {
+                /* const scrollView = document.getElementsByClassName('nav-scroll-view')[0]
+                console.log(scrollView.scrollLeft)
+                scrollView.scrollLeft = 120 + 'px' */
+                // this.$refs.navScrollView.scrollTo(120, 0)
                 this.currentIndex = index
                 this.$emit('change', index)
                 this.moveTo()
@@ -84,7 +88,9 @@
         top: 0
         z-index: 9999
         width: 100%
-        box-shadow: 0 4px 5px rgba(0, 0, 0, 0.04)
+        box-shadow: 0 4px 5px rgba(0, 0, 0, 0.05)
+        border-bottom-left-radius: 10px
+        border-bottom-right-radius: 10px
     .nav-component-wrapper
         background: white
         overflow: hidden

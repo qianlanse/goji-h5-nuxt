@@ -26,7 +26,7 @@
         },
         mounted() {
             if (process.browser) {
-                this.height = document.body.clientWidth / 2
+                this.height = window.innerWidth / 2
                 this.$parent.$parent.bannerHeight = this.height
                 window.addEventListener('resize', this.handleWindowResize)
             }
@@ -39,7 +39,8 @@
         methods: {
             // 屏幕大小改变
             handleWindowResize() {
-                this.height = document.body.clientWidth / 2
+                this.height = window.innerWidth / 2
+                this.$parent.$parent.bannerHeight = this.height
             }
         }
     }

@@ -1,3 +1,20 @@
+@mixin headerTop($top: 0, $left: 0, $bottom: 0, $right: 0, $index: 1)
+    position: fixed
+    top: $top
+    left: $left
+    bottom: $bottom
+    right: $right
+    z-index: $index
+    width: 100%
+@mixin relative($type: fixed, $top: 0, $left: 0, $bottom: 0, $right: 0, $index: 50)
+    position: $type
+    top: $top
+    left: $left
+    bottom: $bottom
+    right: $right
+    z-index: $index
+    width: 100%
+    
 $len: 200
 $mul: 1
 $px: px
@@ -118,6 +135,17 @@ $topmul: 1
     align-items: center
 .flex-row-center
     @include flex-row-center
+@mixin flex-row-end
+    display: flex
+    flex-direction: row
+    align-items: flex-end
+.flex-row-end
+    @include flex-row-end
+@mixin flex-column
+    display: flex
+    flex-direction: column
+.flex-column
+    @include flex-column
 @mixin flex-column-center
     display: flex
     flex-direction: column
@@ -136,3 +164,9 @@ $topmul: 1
     flex-wrap: wrap
 .flex-wrap
     @include flex-wrap
+@mixin flex-space-between
+    display: flex
+    justify-content: space-between
+    align-items: center
+.flex-space-between
+    @include flex-space-between

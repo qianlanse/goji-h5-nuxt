@@ -21,10 +21,14 @@
                         .title-box
                             .title.orient(v-html="jtem.title")
                         .footer
-                            .w25.h25.mr5(@click.prevent="handleViewUser(jtem)")
+                            .w25.h25.mr5
                                 van-image.pc100.ph100.circle.hidden.fadein(:src="jtem.authorAvatar")
-                            .fz12.lh150.color-text.orient.orient1.flex1(@click.prevent="handleViewUser(jtem)") {{ jtem.authorName }}
-                            .flex-row-center.ml10(@click.prevent="handleLike(jtem, index, jndex)")
+                                    template(v-slot:loading)
+                                        div.lazyload.pc100.ph100
+                                    template(v-slot:error)
+                                        div.lazyload.pc100.ph100
+                            .fz12.lh150.color-text.orient.orient1.flex1 {{ jtem.authorName }}
+                            .flex-row-center.ml10
                                 .mr3.w20.h20.flex-center.relative
                                     .absolute-center.color-black(v-if="jtem.likeLoading")
                                         van-loading(type="spinner")
@@ -47,40 +51,6 @@
                 type: Object,
                 require: true,
                 default: () => initData()
-            }
-        },
-        methods: {
-            // 查看详情
-            handleViewDetail () {
-                // const url = `/pages/detail/detail?id=${item.id}`
-            },
-            // 查看用户
-            handleViewUser () {
-            },
-            // 点赞
-			async handleLike () {
-                /* const current = this.result.renderList[index][jndex]
-                if (current.likeLoading) {
-                    return
-                }
-                const backUrl = '/pages/index/index'
-                if (checkAuth(backUrl, true)) {
-                    try {
-                        current.likeLoading = true
-                        const response = await ArticleApi.articleLike(item.id)
-                        current.likeLoading = false
-                        if (response && response.success) {
-                            this.$emit('handleLike', response, index, jndex)
-                        }
-                    } catch (error) {
-                        current.likeLoading = false
-                        if (this.$parent.requestErrorHandle) {
-                            this.$parent.isRequest = true
-                            this.$parent.requestErrorHandle(error)
-                        }
-                        this.$apply()
-                    }
-                } */
             }
         }
     }

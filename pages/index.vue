@@ -20,8 +20,8 @@
 </template>
 <script>
     import qs from 'qs'
-	import banner from '~/components/banner.vue'
-	import MNav from '~/components/nav.vue'
+	import banner from '~/components/banner'
+	import MNav from '~/components/nav'
 	import MArticle from '~/components/article/article.vue'
 	import skeleton from '~/components/article/skeleton.vue'
 	import loadmore from '~/components/load-more.vue'
@@ -83,7 +83,7 @@
         },
         mounted() {
             if (process.browser) {
-                this.halfWidth = document.body.clientWidth / 2 - 15
+                this.halfWidth = window.innerWidth / 2 - 15
                 window.addEventListener('resize', this.handleWindowResize)
                 window.addEventListener('scroll', this.handleWindowScroll)
             }
@@ -97,7 +97,7 @@
 		methods: {
             // 屏幕大小改变
             handleWindowResize() {
-                this.halfWidth = document.body.clientWidth / 2 - 15
+                this.halfWidth = window.innerWidth / 2 - 15
                 this.changeDataSource()
             },
             // 屏幕滚动
@@ -163,8 +163,8 @@
                         if (response && response.success) {
                             const totalPages = response.data.totalPages
                             let { data } = response.data
-                            data = changeDataSource(this.halfWidth, data)
                             if (totalPages) {
+                                data = changeDataSource(this.halfWidth, data)
                                 data.forEach((item, index) => {
                                     const willPushIndex = index % 2
                                     if (refresh) {
