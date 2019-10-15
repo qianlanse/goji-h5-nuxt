@@ -1,11 +1,10 @@
 <template lang="pug">
     van-pull-refresh(v-model="refreshLoading" @refresh="handleRefresh")
-        banner(:data="banners")
+        banner(:data="banners" @navigate="handleNavigator")
         m-nav(:navs="navs" :fixed="isFixed" @change="handleChangeNav")
-        .mlr10(v-if="!tabList.length")
-            .flex-wrap
-                skeleton(v-for="item in 4" :key="item")
-        van-list.plr10.pt8(
+        .mlr10.mt10(v-if="!tabList.length")
+            skeleton
+        van-list.plr10.mt10(
             v-for="(item, index) in tabList"
             :key="index"
             v-model="item.loading"
@@ -16,21 +15,22 @@
             finished-text="没有更多数据了呀^_^"
             :immediate-check="true")
             loadmore(slot="loading")
-            m-article(:result="item")
+            m-activity(:result="item")
 </template>
 <script>
     import qs from 'qs'
 	import banner from '~/components/banner'
 	import MNav from '~/components/nav'
-	import MArticle from '~/components/article/article.vue'
-	import skeleton from '~/components/article/skeleton.vue'
-	import loadmore from '~/components/load-more.vue'
-    import { initData, changeDataSource } from '~/common/util.js'
+	import MActivity from '~/components/activity/activity.vue'
+	import skeleton from '~/components/activity/skeleton.vue'
+    import loadmore from '~/components/load-more.vue'
+    import { initData } from '~/common/util.js'
+    const activityState = ['报名中', '进行中', '已结束', '审核被拒', '审核中']
 	export default {
 		components: {
             banner,
             MNav,
-            MArticle,
+            MActivity,
             skeleton,
             loadmore
         },
@@ -48,7 +48,7 @@
         },
         head() {
             return {
-                title: 'GOJI',
+                title: '活动类别 - GOJI',
                 meta: [
                     {
                         hid: 'description', name: 'description', content: 'GOJI be well be happy'
@@ -60,29 +60,27 @@
         async asyncData({ $axios }) {
             try {
                 const [bannerData, navData] = await Promise.all([
-                    $axios.get('index/ad'),
-                    $axios.get('index/tags4recommend')
+                    $axios.get('activity/recommend'),
+                    $axios.get('activity/category/list')
                 ])
                 const navs = [{ id: '', name: '推荐' }, ...navData.data]
                 return {
-                    banners: bannerData.data.bannerAd.filter(item => item.category !== 'PRODUCT' && item.category !== 'SHOP').map((item) => {
+                    banners: bannerData.data.map((item) => {
                         return {
                             ...item,
-                            loaded: false,
-                            coverImage: item.coverImageUrl + '?x-oss-process=image/resize,p_80/format,jpg'
+                            coverImage: item.imageUrl
                         }
                     }),
                     navs,
                     tabList: navs.map(() => initData())
                 }
             } catch (err) {
-                console.log(err)
             }
         },
         mounted() {
             this.fetchDataList()
             if (process.browser) {
-                this.halfWidth = window.innerWidth / 2 - 15
+                this.contentWidth = window.innerWidth - 20
                 window.addEventListener('resize', this.handleWindowResize)
                 window.addEventListener('scroll', this.handleWindowScroll)
             }
@@ -96,28 +94,44 @@
 		methods: {
             // 屏幕大小改变
             handleWindowResize() {
-                this.halfWidth = window.innerWidth / 2 - 15
-                this.changeDataSource()
+                this.contentWidth = window.innerWidth - 20
+                const currentIndex = this.currentIndex
+                const parent = this.tabList[currentIndex]
+                parent.content = this.changeWidth(parent.content, true)
             },
             // 屏幕滚动
             handleWindowScroll() {
                 this.isFixed = window.scrollY >= this.bannerHeight
             },
             // 改变页面布局
-            changeDataSource() {
-                const currentIndex = this.currentIndex
-                const parent = this.tabList[currentIndex]
-                const data = changeDataSource(this.halfWidth, parent.content, true)
-                parent.renderList = [[], []]
-                data.forEach((item, index) => {
-                    const willPushIndex = index % 2
-                    parent.renderList[willPushIndex].push(item)
+            changeWidth(data, resize = false) {
+                const width = this.contentWidth
+                return data.map((item) => {
+                    const coverWidth = item.coverWidth
+                    const coverHeight = item.coverHeight
+                    let coverImage = item.coverImage
+                    if (coverImage.includes('http:')) {
+                        coverImage = coverImage.replace('http:', 'https:')
+                    }
+                    if (resize) {
+                        return {
+                            ...item,
+                            width,
+                            height: width * coverHeight / coverWidth
+                        }
+                    } else {
+                        return {
+                            ...item,
+                            width,
+                            height: width * coverHeight / coverWidth,
+                            coverImage: coverImage + `?x-oss-process=image/resize,p_70/format,jpg`
+                        }
+                    }
                 })
             },
             // 下拉刷新
             handleRefresh() {
-                this.fetchDataList(true)
-                this.refreshLoading = false
+                this.fetchDataList()
             },
             // 页面滚动
             handleScroll() {
@@ -133,35 +147,45 @@
                     this.fetchDataList()
                 }
             },
+            // 跳转页面
+            handleNavigator(row) {
+                this.$router.push({
+                    path: `/activity/${row.activityId}`
+                })
+            },
             // 获取列表数据
-            async fetchDataList (refresh = false) {
+            async fetchDataList () {
                 const currentIndex = this.currentIndex
                 const parent = this.tabList[currentIndex]
                 if (parent.query.page > parent.totalPages && parent.totalPages > 0) {
-                    parent.loaded = false
+                    parent.loaded = true
                     parent.loading = false
+                    this.refreshLoading = false
                 } else {
                     try {
                         const params = {
                             ...parent.query,
-                            tag: this.navs[currentIndex].id
+                            category: this.navs[currentIndex].id
                         }
-                        const response = await this.$axios.get('index?' + qs.stringify(params))
+                        const response = await this.$axios.get('activity/page?' + qs.stringify(params))
                         if (response && response.success) {
                             const totalPages = response.data.totalPages
                             let { data } = response.data
                             if (totalPages) {
-                                data = changeDataSource(this.halfWidth, data)
-                                data.forEach((item, index) => {
-                                    const willPushIndex = index % 2
-                                    if (refresh) {
-                                        parent.renderList[willPushIndex].unshift(item)
-                                    } else {
-                                        parent.renderList[willPushIndex].push(item)
+                                data = data.map((item) => {
+                                    return {
+                                        ...item,
+                                        progressText: activityState[item.progress],
+                                        startTime: item.startTime1.split(' ')
                                     }
                                 })
+                                data = this.changeWidth(data)
                                 parent.totalPages = totalPages
-                                parent.content = [...parent.content, ...data]
+                                if (this.refreshLoading) {
+                                    parent.content = [...data, ...parent.content]
+                                } else {
+                                    parent.content = [...parent.content, ...data]
+                                }
                                 parent.query = {
                                     ...parent.query,
                                     page: parent.query.page + 1
@@ -174,11 +198,17 @@
                             }
                         }
                         parent.loading = false
+                        this.refreshLoading = false
                     } catch (error) {
                         parent.loading = false
+                        this.refreshLoading = false
                     }
                 }
             }
         }
-	}
+    }
 </script>
+<style lang="sass">
+    body
+        background-color: #fcfcfc
+</style>

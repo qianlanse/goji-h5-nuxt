@@ -63,29 +63,23 @@
                 :finished="articleDataSource.loaded"
                 finished-text="没有更多数据了呀^_^"
                 :immediate-check="true")
-                loadmore(slot="loading")
+                m-loadmore(slot="loading")
                 m-article(:result="articleDataSource")
-        down-app(ref="downapp" url="article" :id="$route.params.id")
+        m-downapp(ref="downapp" url="article" :id="$route.params.id")
 </template>
 <script>
     import qs from 'qs'
     import { ImagePreview } from 'vant'
     import { initData, changeDataSource, changeComments } from '@/common/util'
-    import MHeader from '@/components/header'
     import CommentContent from '@/components/comment/child.vue'
     import MArticle from '~/components/article/article.vue'
     import skeleton from '~/components/article/skeleton.vue'
-    import loadmore from '~/components/load-more.vue'
-    import DownApp from '~/components/downapp'
     export default {
         scrollToTop: true,
         components: {
-            MHeader,
             CommentContent,
             MArticle,
-            skeleton,
-            loadmore,
-            DownApp
+            skeleton
         },
         head() {
             return {

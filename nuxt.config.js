@@ -43,7 +43,7 @@ module.exports = {
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: ['@/plugins/axios', '@/plugins/vant'],
+    plugins: ['@/plugins/axios', '@/plugins/vant', '@/plugins/component'],
     /*
      ** Nuxt.js dev-modules
      */
