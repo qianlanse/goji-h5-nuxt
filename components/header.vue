@@ -101,8 +101,8 @@
         mounted() {
             if (process.browser) {
                 this.isWechatBrowser = browser.isWx()
-                this.isBack = window.history.length > 1
-                this.paddingTitle = document.querySelector('.global-left-box').clientWidth + 5
+                this.isBack = window.history.length > 2
+                this.paddingTitle = document.querySelector('.global-left-box').clientWidth + 10
             }
         },
         methods: {
@@ -123,7 +123,7 @@
     .global-header-container
         .global-left-box
             position: fixed
-            z-index: 10001
+            z-index: 101
             &.hidden
                 opacity: 0
                 visibility: hidden
@@ -141,7 +141,7 @@
             top: 0
             left: 0
             width: 100%
-            z-index: 10001
+            z-index: 101
             .global-header-content
                 position: relative
                 width: 100%

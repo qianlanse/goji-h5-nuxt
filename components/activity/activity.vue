@@ -1,5 +1,5 @@
 <template lang="pug">
-    .activity-list-container
+    .activity-list-container.plr10
         skeleton(v-if="result['content'] && result['content'].length === 0 && !result['empty']")
         .mb20.br6(v-for="(item, index) in result['content']" :key="index")
             nuxt-link.cover-box.relative(tag="div" :to="`/activity/${item.id}`")
@@ -47,10 +47,7 @@
     }
 </script>
 <style lang="sass">
-    body
-        background: #f5f5f5
     .activity-list-container
-        width: 100%
         .cover-box
             border-top-left-radius: 4px
             border-top-right-radius: 4px

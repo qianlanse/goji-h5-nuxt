@@ -12,10 +12,12 @@
                 .flex-column.flex1.mlr10.ptb5
                     h2.no-bold.orient.orient1.fz14.lh140 {{ result.author }}
                     p.orient.orient1.fz12.color-text-light-x.lh130 {{ result.authorIntro }}
-            .flex-center.ph100(slot="rightchild")
+            //-.flex-center.ph100(slot="rightchild")
                 .w30.h30.circle.flex-center
                     i.icon.icon-moreandroid
-        .swiper-container.hidden.relative(:style="{'max-height': swipeMaxHeight + 'px'}")
+        .swiper-container.hidden.relative(
+            v-if="result.articleType === 'IMAGE' || result.articleType === 'IMAGE_TEXT'"
+            :style="{'max-height': swipeMaxHeight + 'px'}")
             van-swipe.transition(@change="handleChangeSwiper" :show-indicators="false" :style="{height: swipeHeight + 'px'}")
                 van-swipe-item(v-for="(item, index) in result.images" :key="index" @click="handlePreview(index)")
                     van-image.block(:src="item.thumb" :style="{width: item.width + 'px', height: item.height + 'px'}")
@@ -26,6 +28,15 @@
             .swipe-indicator(slot="indicator")
                 .content
                     .dot(v-for="(item, index) in result.images" :key="index" :class="{active: index === swipeCurrent}")
+        .swiper-container.hidden.relative(
+            v-if="result.articleType === 'VIDEO'"
+            :style="{'max-height': swipeMaxHeight + 'px'}")
+            .lazyload.h200(v-if="!initVideoReady")
+            .video-play-box(
+                ref="videoPlayer"
+                :playsinline='playsinline'
+                @ready="playerReadied"
+                v-video-player:myVideoPlayer="playerOptions")
         .author-wrapper.flex-row-center.bg-fafafa.ptb10.plr20
             .flex-row-center.flex1.mr10
                 van-image.w50.h50.block.circle.hidden(:src="result.authorAvatar && result.authorAvatar + '?x-oss-process=image/resize,m_fill,h_100,w_100/format,jpg'")
@@ -98,6 +109,7 @@
                 swipeHeight: 240,
                 refreshLoading: false,
                 initLoading: true,
+                initVideoReady: false,
                 result: {},
                 totalComments: 0,
                 comments: [],
@@ -107,6 +119,13 @@
                 },
                 articleDataSource: {
                     ...initData()
+                },
+                playsinline: true,
+                playerOptions: {
+                    autoplay: false,
+                    muted: false,
+                    fluid: true,
+                    language: 'zh-CN'
                 }
             }
         },
@@ -221,10 +240,28 @@
                             }
                         })
                     }
-                    this.swipeHeight = this.result.images[this.swipeCurrent].height
                     this.authorWrapper = document.querySelector('.author-wrapper')
                     this.swipeMaxHeight = this.windowHeight - this.authorWrapper.offsetHeight - 55
+                    if (this.result.articleType === 'VIDEO') {
+                        this.playerOptions = {
+                            ...this.playerOptions,
+                            height: this.swipeMaxHeight,
+                            width: this.windowWidth,
+                            poster: this.result.coverImage,
+                            sources: [{
+                                type: 'video/mp4',
+                                src: this.result.video.playUrl
+                            }]
+                        }
+                        this.videoHeight = this.swipeMaxHeight
+                    } else {
+                        this.swipeHeight = this.result.images[this.swipeCurrent].height
+                    }
                 }
+            },
+            // 播放准备就绪
+            playerReadied() {
+                this.initVideoReady = true
             },
             // 改变页面布局
             changeDataSource() {
@@ -347,4 +384,20 @@
     .article-body-content
         img
             width: 100%
+    .video-play-box
+        .vjs-load-progress div
+            background-color: rgba(0, 0, 0, 0.5)
+        .vjs-control-bar
+            background-color: rgba(0, 0, 0, 0.5)
+        .vjs-big-play-button
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+            background-color: rgba(0, 0, 0, 0.45)
+            border-color: rgba(255, 255, 255, 0.65)
+            color: rgba(255, 255, 255, 0.85)
+            width: 2em
+            height: 2em
+            line-height: 2em
+            border-radius: 50%
 </style>

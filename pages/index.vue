@@ -1,11 +1,11 @@
 <template lang="pug">
     van-pull-refresh(v-model="refreshLoading" @refresh="handleRefresh")
-        banner(:data="banners")
+        banner(:data="banners" @navigate="handleNavigator")
         m-nav(:navs="navs" :fixed="isFixed" @change="handleChangeNav")
         .mlr10(v-if="!tabList.length")
             .flex-wrap
                 skeleton(v-for="item in 4" :key="item")
-        van-list.plr10.pt8(
+        van-list.plr10.pt10(
             v-for="(item, index) in tabList"
             :key="index"
             v-model="item.loading"
@@ -132,6 +132,12 @@
                 if (!this.tabList[index].totalPages) {
                     this.fetchDataList()
                 }
+            },
+            // 跳转页面
+            handleNavigator(row) {
+                this.$router.push({
+                    path: `/detail/${row.id}`
+                })
             },
             // 获取列表数据
             async fetchDataList (refresh = false) {

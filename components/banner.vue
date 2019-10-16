@@ -1,6 +1,6 @@
 <template lang="pug">
     .banner-container
-        .skeleton-animation-container.bg-background.lazyload.relative(v-if="!data.length" :style="{height: height + 'px'}")
+        .skeleton-animation-container.bg-background.lazyload.relative.hidden(v-if="!data.length" :style="{height: height + 'px'}")
         van-swipe(:show-indicators="false" v-else)
             van-swipe-item(v-for="(item, index) in data" :key="index" @click="handleNavigate(item)")
                 van-image.pc100.h200.block(:src="item.coverImage" fit="fill" :style="{height: height + 'px'}")

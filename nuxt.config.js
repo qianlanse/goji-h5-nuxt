@@ -38,12 +38,20 @@ module.exports = {
      */
     css: [
         'vant/lib/index.css',
+        'video.js/dist/video-js.css',
         { src: '~assets/sass/index.sass', lang: 'sass' }
     ],
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: ['@/plugins/axios', '@/plugins/vant', '@/plugins/component'],
+    plugins: [
+        '@/plugins/axios',
+        '@/plugins/vant',
+        '@/plugins/component',
+        {
+            src: '~plugins/video.js', ssr: false
+        }
+    ],
     /*
      ** Nuxt.js dev-modules
      */

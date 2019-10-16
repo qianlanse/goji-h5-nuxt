@@ -4,7 +4,7 @@
         m-nav(:navs="navs" :fixed="isFixed" @change="handleChangeNav")
         .mlr10.mt10(v-if="!tabList.length")
             skeleton
-        van-list.plr10.mt10(
+        van-list.mt10(
             v-for="(item, index) in tabList"
             :key="index"
             v-model="item.loading"
@@ -209,6 +209,4 @@
     }
 </script>
 <style lang="sass">
-    body
-        background-color: #fcfcfc
 </style>
