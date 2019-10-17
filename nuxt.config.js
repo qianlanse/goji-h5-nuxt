@@ -1,4 +1,5 @@
 const { resolve } = require('path')
+const axios = require('axios')
 const config = require('./common/config.js')
 module.exports = {
     mode: 'universal',
@@ -101,6 +102,22 @@ module.exports = {
                     }
                 })
             }
+        }
+    },
+    generate: {
+        subFolders: false,
+        routes (callback) {
+            axios.get(config.API + 'index?page=1&size=10&tag=')
+                .then((res) => {
+                    const routes = res.data.map((article) => {
+                        return {
+                            route: '/detail/' + article.id,
+                            payload: article
+                        }
+                    })
+                    callback(null, routes)
+                })
+            .catch(callback)
         }
     },
     server: {
