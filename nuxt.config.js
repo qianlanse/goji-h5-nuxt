@@ -106,18 +106,26 @@ module.exports = {
     },
     generate: {
         subFolders: false,
-        routes (callback) {
-            axios.get(config.API + 'index?page=1&size=10&tag=')
-                .then((res) => {
-                    const routes = res.data.map((article) => {
-                        return {
-                            route: '/detail/' + article.id,
-                            payload: article
-                        }
-                    })
-                    callback(null, routes)
+        async routes () {
+            try {
+                const [articles, activites] = await Promise.all([
+                    axios.get(config.API + 'index?page=1&size=10&tag='),
+                    axios.get(config.API + 'activity/page?page=1&size=10&category=')
+                ])
+                const articleRoutes = articles.data.data.data.map((article) => {
+                    return {
+                        route: '/detail/' + article.id
+                    }
                 })
-            .catch(callback)
+                const activityRoutes = activites.data.data.data.map((activity) => {
+                    return {
+                        route: '/activity/' + activity.id
+                    }
+                })
+                return [...articleRoutes, ...activityRoutes]
+            } catch (error) {
+                return []
+            }
         }
     },
     server: {
