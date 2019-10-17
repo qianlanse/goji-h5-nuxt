@@ -109,8 +109,8 @@ module.exports = {
         async routes () {
             try {
                 const [articles, activites] = await Promise.all([
-                    axios.get(config.API + 'index?page=1&size=10&tag='),
-                    axios.get(config.API + 'activity/page?page=1&size=10&category=')
+                    axios.get(config.API + 'index?page=1&size=1000&tag='),
+                    axios.get(config.API + 'activity/page?page=1&size=1000&category=')
                 ])
                 const articleRoutes = articles.data.data.data.map((article) => {
                     return {
