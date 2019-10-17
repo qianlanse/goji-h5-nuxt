@@ -1,7 +1,17 @@
 <template lang="pug">
     van-pull-refresh(v-model="refreshLoading" @refresh="handleRefresh")
-        banner(:data="banners" @navigate="handleNavigator")
-        m-nav(:navs="navs" :fixed="isFixed" @change="handleChangeNav")
+        m-header(:index="true")
+            .flex-row-center.bg-white(slot="headerchild" style="height: 100%; padding-right: 10px")
+                van-image.w65.h30.mlr10.br15.hidden(src="images/logo.png")
+                    template(v-slot:loading)
+                        div.lazyload.pc100.ph100
+                    template(v-slot:error)
+                        div.lazyload.pc100.ph100
+                nuxt-link.flex1.bg-background.br40.flex-center(:style="{height: config.headerInnerHeight + 'px'}" to="/search")
+                    .icon.icon-search.fz14.color-text-light-x.mr5
+                    .fz14.color-text-light-x 搜索您想知道的内容
+        m-banner(:data="banners" @navigate="handleNavigator")
+        m-nav(:navs="navs" :fixed="isFixed" :fixedHeight="config.headerHeight" @change="handleChangeNav")
         .mlr10(v-if="!tabList.length")
             .flex-wrap
                 skeleton(v-for="item in 4" :key="item")
@@ -20,15 +30,16 @@
 </template>
 <script>
     import qs from 'qs'
-	import banner from '~/components/banner'
-	import MNav from '~/components/nav'
+	import MBanner from '~/components/banner'
+	import MNav from '~/components/nav.vue'
 	import MArticle from '~/components/article/article.vue'
 	import skeleton from '~/components/article/skeleton.vue'
 	import loadmore from '~/components/load-more.vue'
+    import * as config from '~/common/config.js'
     import { initData, changeDataSource } from '~/common/util.js'
 	export default {
 		components: {
-            banner,
+            MBanner,
             MNav,
             MArticle,
             skeleton,
@@ -36,6 +47,7 @@
         },
 		data() {
 			return {
+                config,
                 refreshLoading: false,
                 isFixed: false,
 				banners: [],
@@ -107,17 +119,13 @@
             changeDataSource() {
                 const currentIndex = this.currentIndex
                 const parent = this.tabList[currentIndex]
-                const data = changeDataSource(this.halfWidth, parent.content, true)
-                parent.renderList = [[], []]
-                data.forEach((item, index) => {
-                    const willPushIndex = index % 2
-                    parent.renderList[willPushIndex].push(item)
+                parent.renderList = parent.renderList.map((list) => {
+                    return changeDataSource(this.halfWidth, list, true)
                 })
             },
             // 下拉刷新
             handleRefresh() {
                 this.fetchDataList(true)
-                this.refreshLoading = false
             },
             // 页面滚动
             handleScroll() {
@@ -135,9 +143,11 @@
             },
             // 跳转页面
             handleNavigator(row) {
-                this.$router.push({
-                    path: `/detail/${row.id}`
-                })
+                if (row.category === 'IMAGE_TEXT') {
+                    this.$router.push({
+                        path: `/detail/${row.articleId}`
+                    })
+                }
             },
             // 获取列表数据
             async fetchDataList (refresh = false) {
@@ -184,6 +194,7 @@
                         parent.loading = false
                     }
                 }
+                this.refreshLoading = false
             }
         }
 	}

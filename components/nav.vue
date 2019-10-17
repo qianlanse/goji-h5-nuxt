@@ -1,12 +1,15 @@
 <template lang="pug">
     div(:style="{height: navHeight + 'px'}")
-        .bg-white(ref="nav" :class="{fixedNav: fixed}")
+        .bg-white.h40.mlr10.hidden(v-if="navs.length === 0")
+            .nav-skeleton.ph100.pc100
+                .inline-block.nav-skeleton-item.pc12.ph50.mr15.mt15.plr15.bg-background.lazyload(v-for="item in 8" :key="item")
+        .bg-white(ref="nav" :class="{fixedNav: fixed}" :style="{top: fixedHeight + 'px'}")
             van-tabs(v-model="currentIndex" :ellipsis="false" :border="false" :color="defaultColor" @change="handleChangeNav")
                 van-tab(v-for="(nav, index) in navs" :key="index" :title="nav.name")
         .pc100(:style="{height: navHeight + 'px'}" v-show="fixed")
 </template>
 <script>
-    import { defaultColor } from '@/common/config'
+    import { defaultColor } from '~/common/config'
     export default {
         props: {
             navs: {
@@ -18,6 +21,10 @@
             fixed: {
                 type: Boolean,
                 default: false
+            },
+            fixedHeight: {
+                type: Number,
+                default: 0
             }
         },
         data() {
@@ -29,7 +36,9 @@
         },
         mounted() {
             if (process.browser) {
-                this.navHeight = this.$refs.nav.clientHeight
+                if (this.$refs.nav) {
+                    this.navHeight = this.$refs.nav.clientHeight
+                }
             }
         },
         methods: {
@@ -51,6 +60,12 @@
         box-shadow: 0 4px 5px rgba(0, 0, 0, 0.05)
         border-bottom-left-radius: 10px
         border-bottom-right-radius: 10px
+    .nav-skeleton
+        overflow-x: scroll
+        overflow-y: hidden
+        white-space: nowrap
+    .nav-skeleton-item:last-child
+        margin-right: 0
     .van-tab
         padding: 0 10px
         color: black

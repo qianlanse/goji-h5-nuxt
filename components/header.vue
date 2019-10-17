@@ -1,8 +1,9 @@
 <template lang="pug">
-    .global-header-container(v-if="!isWechatBrowser")
+    .global-header-container(v-if="!isWechatBrowser || index")
         .global-header(:class="{'border-bottom-1px': borderpixel}")
-            .global-left-box.flex-row-center.hidden.pl10(
+            .global-left-box.flex-row-center.hidden.ml10(
                 ref="globalHeaderLeft"
+                v-if="!index"
                 :class="[leftShow, notTransparent]"
                 :style="{height: btnWH + 'px', 'border-radius':  btnWH / 2 + 'px', top: (height - btnWH) / 2 + 'px'}")
                 .global-left-inner.flex-center.pc50.ph100(:style="{width: btnWH + 'px'}" v-if="back && isBack" @click="handleBack")
@@ -24,7 +25,8 @@
         .global-header-padding(v-if="notpaddingbox" :style="{height: height + 'px'}")
 </template>
 <script>
-    import { browser } from '@/common/util'
+    import { headerHeight } from '~/common/config'
+    import { browser } from '~/common/util'
     export default {
         props: {
             title: {
@@ -33,7 +35,7 @@
             },
             height: {
                 type: Number,
-                default: 55
+                default: headerHeight
             },
             btnWH: {
                 type: Number,
@@ -54,6 +56,10 @@
             home: {
                 type: Boolean,
                 default: true
+            },
+            index: {
+                type: Boolean,
+                default: false
             },
             double: {
                 type: Boolean,
@@ -93,16 +99,13 @@
                 return this.focus ? 'hidden' : 'show'
             }
         },
-        watch: {
-            '$router'() {
-                console.log('123')
-            }
-        },
         mounted() {
             if (process.browser) {
                 this.isWechatBrowser = browser.isWx()
-                this.isBack = window.history.length > 2
-                this.paddingTitle = document.querySelector('.global-left-box').clientWidth + 10
+                this.isBack = window.history.length > 1
+                if (!this.index) {
+                    this.paddingTitle = document.querySelector('.global-left-box').clientWidth + 10
+                }
             }
         },
         methods: {

@@ -3,24 +3,26 @@ const axios = require('axios')
 const config = require('./common/config.js')
 module.exports = {
     mode: 'universal',
-    /*
-     ** Headers of the page
-     */
     head: {
-        title: process.env.npm_package_name || '',
+        title: process.env.npm_package_name || 'GOJI',
         meta: [
             {
                 charset: 'utf-8'
             },
             {
                 name: 'viewport',
-                content: 'width=device-width, initial-scale=1'
+                content: 'width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,target-densitydpi=device-dpi'
             },
             {
                 hid: 'description',
                 name: 'description',
                 content: process.env.npm_package_description || ''
-            }
+            },
+            { name: 'renderer', content: 'webkit' },
+            { name: 'applicable-device', content: 'pc' },
+            { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge,chrome=1' },
+            { 'http-equiv': 'Cache-Control', content: 'no-transform' },
+            { 'http-equiv': 'Cache-Control', content: 'no-siteapp' }
         ],
         link: [
             {
@@ -30,21 +32,12 @@ module.exports = {
             }
         ]
     },
-    /*
-     ** Customize the progress-bar color
-     */
     loading: false,
-    /*
-     ** Global CSS
-     */
     css: [
         'vant/lib/index.css',
         'video.js/dist/video-js.css',
         { src: '~assets/sass/index.sass', lang: 'sass' }
     ],
-    /*
-     ** Plugins to load before mounting the App
-     */
     plugins: [
         '@/plugins/axios',
         '@/plugins/vant',
@@ -53,18 +46,10 @@ module.exports = {
             src: '~plugins/video.js', ssr: false
         }
     ],
-    /*
-     ** Nuxt.js dev-modules
-     */
     buildModules: [
-        // Doc: https://github.com/nuxt-community/eslint-module
         '@nuxt/typescript-build'
     ],
-    /*
-     ** Nuxt.js modules
-     */
     modules: [
-        // Doc: https://axios.nuxtjs.org/usage
         [
             '@nuxtjs/axios',
             {
@@ -72,18 +57,11 @@ module.exports = {
             }
         ]
     ],
-    /*
-     ** Axios module configuration
-     ** See https://axios.nuxtjs.org/options
-     */
-    axios: {},
-    /*
-     ** Build configuration
-     */
+    axios: {
+    },
     build: {
-        /*
-         ** You can extend webpack config here
-         */
+        // 分析并可视化构建后的打包文件，你可以基于分析结果来决定如何优化它
+        analyze: true,
         extend(config, { isDev, isClient }) {
             if (isDev && isClient) {
                 config.module.rules.push({
@@ -109,8 +87,8 @@ module.exports = {
         async routes () {
             try {
                 const [articles, activites] = await Promise.all([
-                    axios.get(config.API + 'index?page=1&size=1000&tag='),
-                    axios.get(config.API + 'activity/page?page=1&size=1000&category=')
+                    axios.get(config.API + 'index?page=1&size=100&tag='),
+                    axios.get(config.API + 'activity/page?page=1&size=100&category=')
                 ])
                 const articleRoutes = articles.data.data.data.map((article) => {
                     return {

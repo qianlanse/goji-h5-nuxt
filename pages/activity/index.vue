@@ -1,6 +1,6 @@
 <template lang="pug">
     van-pull-refresh(v-model="refreshLoading" @refresh="handleRefresh")
-        banner(:data="banners" @navigate="handleNavigator")
+        m-banner(:data="banners" @navigate="handleNavigator")
         m-nav(:navs="navs" :fixed="isFixed" @change="handleChangeNav")
         .mlr10.mt10(v-if="!tabList.length")
             skeleton
@@ -19,8 +19,8 @@
 </template>
 <script>
     import qs from 'qs'
-	import banner from '~/components/banner'
-	import MNav from '~/components/nav'
+	import MBanner from '~/components/banner'
+	import MNav from '~/components/nav.vue'
 	import MActivity from '~/components/activity/activity.vue'
 	import skeleton from '~/components/activity/skeleton.vue'
     import loadmore from '~/components/load-more.vue'
@@ -28,7 +28,7 @@
     const activityState = ['报名中', '进行中', '已结束', '审核被拒', '审核中']
 	export default {
 		components: {
-            banner,
+            MBanner,
             MNav,
             MActivity,
             skeleton,

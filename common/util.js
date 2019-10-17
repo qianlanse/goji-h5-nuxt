@@ -21,21 +21,21 @@ export const initData = (columns = 2, size = PAGE_SIZE) => {
 }
 
 // 改变列表数据
-export const changeDataSource = (width, data, refresh = false) => {
+export const changeDataSource = (width, data, change = false) => {
     return data.filter(item => item.coverImageWidth && item.coverImageHeight).map((item) => {
         const coverImageWidth = item.coverImageWidth
         const coverImageHeight = item.coverImageHeight
-        let coverImage = item.coverImage
-        if (coverImage.includes('http:')) {
-            coverImage = coverImage.replace('http:', 'https:')
-        }
-        if (refresh) {
+        if (change) {
             return {
                 ...item,
                 width,
                 height: width * coverImageHeight / coverImageWidth
             }
         } else {
+            let coverImage = item.coverImage
+            if (coverImage.includes('http:')) {
+                coverImage = coverImage.replace('http:', 'https:')
+            }
             return {
                 ...item,
                 width,
