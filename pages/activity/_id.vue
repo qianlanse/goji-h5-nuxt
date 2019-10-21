@@ -110,14 +110,19 @@
 </template>
 <script>
     import { ImagePreview } from 'vant'
-    import { defaultColor } from '@/common/config'
+    import { defaultColor } from '~/common/config'
+    import { meta } from '~/config/app.config'
     export default {
         head() {
+            const { result } = this
             return {
-                title: this.result.title || '活动详情',
+                title: result.title || this.$i18n.activityTitleDetail,
                 meta: [
                     {
-                        hid: 'description', name: 'description', content: this.result.title || 'GOJI be well be happy'
+                        hid: 'keywords', name: 'keywords', content: meta.keywords
+                    },
+                    {
+                        hid: 'description', name: 'description', content: result.title || meta.description
                     }
                 ]
             }

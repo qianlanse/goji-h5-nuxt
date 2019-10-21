@@ -1,5 +1,5 @@
 <template lang="pug">
-    .global-header-container(v-if="!isWechatBrowser || index")
+    header.global-header-container(v-if="!isWechatBrowser || index")
         .global-header(:class="{'border-bottom-1px': borderpixel}")
             .global-left-box.flex-row-center.hidden.ml10(
                 ref="globalHeaderLeft"
@@ -25,7 +25,7 @@
         .global-header-padding(v-if="notpaddingbox" :style="{height: height + 'px'}")
 </template>
 <script>
-    import { headerHeight } from '~/common/config'
+    import { page } from '~/config/app.config'
     import { browser } from '~/common/util'
     export default {
         props: {
@@ -35,7 +35,7 @@
             },
             height: {
                 type: Number,
-                default: headerHeight
+                default: page.headerHeight
             },
             btnWH: {
                 type: Number,

@@ -3,7 +3,7 @@
         .bg-white.h40.mlr10.hidden(v-if="navs.length === 0")
             .nav-skeleton.ph100.pc100
                 .inline-block.nav-skeleton-item.pc12.ph50.mr15.mt15.plr15.bg-background.lazyload(v-for="item in 8" :key="item")
-        .bg-white(ref="nav" :class="{fixedNav: fixed}" :style="{top: fixedHeight + 'px'}")
+        nav.bg-white(ref="nav" :class="{fixedNav: fixed}" :style="{top: fixedHeight + 'px'}")
             van-tabs(v-model="currentIndex" :ellipsis="false" :border="false" :color="defaultColor" @change="handleChangeNav")
                 van-tab(v-for="(nav, index) in navs" :key="index" :title="nav.name")
         .pc100(:style="{height: navHeight + 'px'}" v-show="fixed")

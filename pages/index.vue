@@ -9,7 +9,7 @@
                         div.lazyload.pc100.ph100
                 nuxt-link.flex1.bg-background.br40.flex-center(:style="{height: config.headerInnerHeight + 'px'}" to="/search")
                     .icon.icon-search.fz14.color-text-light-x.mr5
-                    .fz14.color-text-light-x 搜索您想知道的内容
+                    .fz14.color-text-light-x {{ $i18n.indexSearchText }}
         m-banner(:data="banners" @navigate="handleNavigator")
         m-nav(:navs="navs" :fixed="isFixed" :fixedHeight="config.headerHeight" @change="handleChangeNav")
         .mlr10(v-if="!tabList.length")
@@ -23,7 +23,7 @@
             v-show="currentIndex === index"
             :offset="100"
             :finished="item.loaded"
-            finished-text="没有更多数据了呀^_^"
+            :finished-text="$i18n.noMoreData"
             :immediate-check="true")
             loadmore(slot="loading")
             m-article(:result="item")

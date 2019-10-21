@@ -72,7 +72,7 @@
                 @load="fetchRelatedSuggestion"
                 :offset="100"
                 :finished="articleDataSource.loaded"
-                finished-text="没有更多数据了呀^_^"
+                :finished-text="$i18n.noMoreData"
                 :immediate-check="true")
                 m-loadmore(slot="loading")
                 m-article(:result="articleDataSource")
@@ -85,6 +85,7 @@
     import CommentContent from '@/components/comment/child.vue'
     import MArticle from '~/components/article/article.vue'
     import skeleton from '~/components/article/skeleton.vue'
+    import { meta } from '~/config/app.config'
     export default {
         scrollToTop: true,
         components: {
@@ -93,11 +94,15 @@
             skeleton
         },
         head() {
+            const { result } = this
             return {
-                title: this.result.title || '文章详情',
+                title: result.title || this.$i18n.articleTitleDetail,
                 meta: [
                     {
-                        hid: 'description', name: 'description', content: this.result.title || 'GOJI be well be happy'
+                        hid: 'keywords', name: 'keywords', content: result.title || meta.keywords
+                    },
+                    {
+                        hid: 'description', name: 'description', content: result.title || meta.description
                     }
                 ]
             }
@@ -355,6 +360,7 @@
         }
     }
 </script>
+
 <style lang="sass">
     .swipe-indicator
         position: absolute
