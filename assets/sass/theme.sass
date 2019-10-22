@@ -1,0 +1,15 @@
+@mixin css-var($text, $reversal, $black, $primary, $body-bg, $module-hover-bg, $logo-rotate)
+    #{--body-bg}: $body-bg
+    #{--theme-black}: $black
+    #{--theme-logo-rotate}: $logo-rotate
+#app
+    &.default
+        @include css-var(
+            $text: #555,
+            $reversal: #fff,
+            $black: #000,
+            $primary: #0088f5,
+            $body-bg: #eee,
+            $module-hover-bg: rgba(197, 197, 197, 0.5),
+            $logo-rotate: none
+        )

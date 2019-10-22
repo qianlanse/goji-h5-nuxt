@@ -57,10 +57,8 @@ export default {
     modules: [
         '@nuxtjs/pwa',
         '@nuxtjs/style-resources',
-        [
-            '@nuxtjs/axios',
-            { baseURL: apiConfig.baseUrl }
-        ]
+        '@nuxtjs/component-cache',
+        ['@nuxtjs/axios', { baseURL: apiConfig.baseUrl }]
     ],
     styleResources: {
     },

@@ -48,7 +48,7 @@
                     h2.orient.orient1.fz18.lh140 {{ result.author }}
                     p.orient.orient1.fz14.color-text-light-x.lh130 {{ result.authorIntro }}
             van-button(type="primary" size="small" color="#6FD781" round @click="handleDownApp") 关注
-        .body-wrapper.pt30.plr14
+        article.body-wrapper.pt30.plr14
             h1.fz24.lh130.mb5.no-bold {{ result.title }}
             p.fz14.color-text-light-x.mb20 {{ result.publishDate }}
             .article-body-content.fz16.lh150.mb20.color-text(v-html="result.content")
