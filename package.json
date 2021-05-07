@@ -25,7 +25,7 @@
     "koa": "^2.6.2",
     "nuxt": "^2.10.0",
     "tool-callapp": "^1.0.1",
-    "ua-parser-js": "^0.7.20",
+    "ua-parser-js": "^0.7.24",
     "vant": "^2.2.5",
     "vue-analytics": "^5.17.2",
     "vue-class-component": "^7.1.0",
